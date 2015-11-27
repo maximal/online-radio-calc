@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<title>Калькулятор интернет-радио</title>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+
+	<style type="text/css">
+		.container {
+			max-width: 980px;
+		}
+
+		.calc-form {
+			max-width: 480px;
+			margin: 0 auto;
+		}
+
+		.unit-text {
+			font-weight: normal;
+		}
+
+		.res-table {
+			margin-top: 2em;
+		}
+		.res-table td {
+			padding: 0.2em 1.5em;
+		}
+	</style>
+</head>
+<body>
+
+
+
+<div class="container">
+
+
+	<div class="row jumbotron">
+		<h1>Калькулятор интернет-радио</h1>
+		<p class="lead">
+			Чтобы&nbsp;узнать возможное количество пользователей и&nbsp;необходимую ширину&nbsp;канала,
+			выберите&nbsp;ограничение исходящего&nbsp;трафика хостинга и&nbsp;желаемую скорость потока.
+		</p>
+	</div>
+
+	<div class="row">
+		<form class="calc-form">
+			<div class="form-group">
+				<label>
+					Месячный лимит исходящего трафика<span class="unit-text">, терабайт в месяц:</span>
+					<input type="range" name="transfer" min="1" max="50" value="4" />
+				</label>
+				<p class="help-block"><span id="res-transfer"></span></p>
+			</div>
+
+			<div class="form-group">
+				<div>
+					<label for="bitrate-default">
+						Желаемая скорость радиопотока<span class="unit-text">, килобит в секунду:</span>
+					</label>
+				</div>
+				<label class="radio-inline">
+					<input type="radio" name="bitrate" value="32" />
+					32
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="bitrate" value="64" />
+					64
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="bitrate" value="96" />
+					96
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="bitrate" id="bitrate-default" value="128" checked="checked" />
+					128
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="bitrate" value="160" />
+					160
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="bitrate" value="192" />
+					192
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="bitrate" value="256" />
+					256
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="bitrate" value="320" />
+					320
+				</label>
+			</div>
+
+			<div class="form-group">
+				<div>
+					<table class="res-table">
+						<tr>
+							<th>Максимальное количество пользователей</th>
+							<td><strong id="res-users">_</strong></td>
+						</tr>
+						<tr>
+							<th>Необходимая пропускная способность</th>
+							<td><strong id="res-bandwidth">_</strong> мегабит/сек</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<footer class="row footer text-right text-muted">
+		<hr />
+		<p>
+			&copy; <a href="http://maximals.ru">MaximAL</a>
+			для&nbsp;<a href="http://vk.com/oilmusic_page">Ilya Oil</a>
+			2015
+		</p>
+	</footer>
+
+</div> <!-- /container -->
+
+
+<!-- Скрипты
+     ======= -->
+<!-- jQuery -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<!-- Bootstrap -->
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<!-- Поехали! -->
+<script type="text/javascript">
+jQuery(function ($) {
+
+	// Жёсткий, мужицкий стрикт
+	'use strict';
+
+	var rangeTransfer = $('input[name=transfer]');
+	var radioBitrate = $('input[name=bitrate]');
+
+	var resUsers = $('#res-users');
+	var resBandwidth = $('#res-bandwidth');
+	var resTransfer = $('#res-transfer');
+
+	function calcResults() {
+		// Считываем значения выбранных параметров
+		var transfer = parseInt(rangeTransfer.val());
+		var bitrate = parseInt(radioBitrate.filter(':checked').val());
+
+		// Килобит в месяц
+		var perMonth = transfer * 1024 * 1024 * 1024 * 1024 * 8 / 1000;
+
+		// Килобит в секунду
+		var perSecond = perMonth / 31 / 24 / 60 / 60;
+
+		// Устанавливаем результаты
+		resUsers.text(Math.floor(perSecond / bitrate));
+		resBandwidth.text(Math.ceil(perSecond / 1000));
+		resTransfer.text(transfer);
+	}
+
+	rangeTransfer.on('input', function () {
+		calcResults();
+	});
+
+	radioBitrate.on('click', function () {
+		calcResults();
+	});
+
+
+	calcResults();
+});
+</script>
+
+</body>
+</html>
+
